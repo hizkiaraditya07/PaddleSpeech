@@ -146,7 +146,7 @@ cache_generator_outputs: True # whether to cache generator outputs in the traini
 ###########################################################
 #                  DATA LOADER SETTING                    #
 ###########################################################
-batch_size: 50              # Batch size.
+batch_size: 50              # Batch size., try 16 batch_size
 num_workers: 4              # Number of workers in DataLoader.
 
 ##########################################################
@@ -183,3 +183,6 @@ train_max_steps: 350000      # Number of training steps. == total_iters / ngpus,
 save_interval_steps: 1000    # Interval steps to save checkpoint.
 eval_interval_steps: 250     # Interval steps to evaluate the network.
 seed: 777                    # random seed number
+max_epoch: 500
+eval_interval_epochs: 50
+save_interval_epochs: 50

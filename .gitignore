@@ -54,3 +54,7 @@ third_party/ctc_decoders/paddlespeech_ctcdecoders.py
 
 dev_env/
 dev_env2/
+/examples/aishell3/vits-vc/dump/
+/examples/aishell3/vits-vc/old_exp/
+/examples/aishell3/vits-vc/old_exp2_arpabet_no_normalize/
+/examples/aishell3/vits-vc/exp/

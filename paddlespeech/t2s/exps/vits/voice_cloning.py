@@ -100,6 +100,9 @@ def voice_cloning(args):
             input_ids = frontend.get_input_ids(
                 sentence, merge_sentences=merge_sentences)
         phone_ids = input_ids["phone_ids"][0]
+
+        print("Input Text:", sentence)
+        print("Phone IDs:", phone_ids)
     else:
         wav, _ = librosa.load(str(args.audio_path), sr=config.fs)
         feats = paddle.to_tensor(spec_extractor.get_linear_spectrogram(wav))
@@ -123,10 +126,18 @@ def voice_cloning(args):
         with paddle.no_grad():
             if args.audio_path is None:
                 out = vits.inference(text=phone_ids, spembs=spk_emb)
+                # multiply duration by a certain number for longer / shorter speech
+                multiplied_duration_arr = out['duration'] * args.duration_multiplier
+                out = vits.inference(text=phone_ids, spembs=spk_emb, durations=multiplied_duration_arr)
             else:
                 out = vits.voice_conversion(
                     feats=feats, spembs_src=spk_emb_src, spembs_tgt=spk_emb)
+                # multiply duration by a certain number for longer / shorter speech
+                multiplied_duration_arr = out['duration'] * args.duration_multiplier
+                out = vits.voice_conversion(
+                    feats=feats, spembs_src=spk_emb_src, spembs_tgt=spk_emb, durations=multiplied_duration_arr)
             wav = out["wav"]
+            # print(out['duration'].shape)
 
         sf.write(
             str(output_dir / (utt_id + ".wav")),
@@ -140,9 +151,16 @@ def voice_cloning(args):
     with paddle.no_grad():
         if args.audio_path is None:
             out = vits.inference(text=phone_ids, spembs=random_spk_emb)
+            # multiply duration by a certain number for longer / shorter speech
+            multiplied_duration_arr = out['duration'] * args.duration_multiplier
+            out = vits.inference(text=phone_ids, spembs=spk_emb, durations=multiplied_duration_arr)
         else:
             out = vits.voice_conversion(
                 feats=feats, spembs_src=spk_emb_src, spembs_tgt=random_spk_emb)
+            # multiply duration by a certain number for longer / shorter speech
+            multiplied_duration_arr = out['duration'] * args.duration_multiplier
+            out = vits.voice_conversion(
+                feats=feats, spembs_src=spk_emb_src, spembs_tgt=spk_emb, durations=multiplied_duration_arr)
         wav = out["wav"]
     sf.write(
         str(output_dir / (utt_id + ".wav")), wav.numpy(), samplerate=config.fs)
@@ -191,6 +209,12 @@ def parse_args():
         type=str2bool,
         default=True,
         help="whether to add blank between phones")
+
+    parser.add_argument(
+        "--duration_multiplier",
+        type=float,
+        default=1.0,
+        help="whether to multiply the duration of phonemes by a certain number")
 
     args = parser.parse_args()
     return args

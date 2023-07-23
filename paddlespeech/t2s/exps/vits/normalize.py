@@ -43,10 +43,10 @@ def insert_after_character(lst, item):
     result = [item]
     for phone in lst:
         result.append(phone)
-        if phone not in INITIALS:
-            # finals has tones
-            assert phone[-1] in "12345"
-            result.append(item)
+        # if phone not in INITIALS:
+        #     # finals has tones
+        #     assert phone[-1] in "12345"
+        #     result.append(item)
     return result
 
 

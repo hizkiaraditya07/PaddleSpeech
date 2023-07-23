@@ -1,7 +1,7 @@
 #!/bin/bash
 
-stage=0
-stop_stage=0
+stage=4
+stop_stage=4
 
 config_path=$1
 add_blank=$2
@@ -11,10 +11,9 @@ ge2e_ckpt_path=$3
 if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
     echo "Inferencing Model"
     python3 ${MAIN_ROOT}/paddlespeech/vector/exps/ge2e/inference.py \
-        --input=D:/myairbridge-AISHELL-3.rar/AISHELL-3/AISHELL-3/train/wav \
+        --input=~/Desktop/vctk_dataset2/VCTK-Corpus/wav48 \
         --output=dump/embed \
-        --checkpoint_path=${ge2e_ckpt_path}\
-        --ngpu=0
+        --checkpoint_path=${ge2e_ckpt_path}
 fi
 
 # copy from tts3/preprocess
@@ -22,7 +21,7 @@ if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
     # get durations from MFA's result
     echo "Generate durations.txt from MFA results ..."
     python3 ${MAIN_ROOT}/utils/gen_duration_from_textgrid.py \
-        --inputdir=./aishell3_alignment_tone \
+        --inputdir=~/Desktop/vctk_dataset2/VCTK-Corpus/vctk_textgrid_arpa \
         --output durations.txt \
         --config=${config_path}
 fi
@@ -32,7 +31,7 @@ if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
     echo "Extract features ..."
     python3 ${BIN_DIR}/preprocess.py \
         --dataset=aishell3 \
-        --rootdir=D:/myairbridge-AISHELL-3.rar/AISHELL-3/AISHELL-3/ \
+        --rootdir=~/Desktop/vctk_dataset2/VCTK-Corpus/ \
         --dumpdir=dump \
         --dur-file=durations.txt \
         --config=${config_path} \

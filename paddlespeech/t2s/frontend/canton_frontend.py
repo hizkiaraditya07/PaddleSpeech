@@ -81,7 +81,7 @@ class CantonFrontend():
     def get_phonemes(self,
                      sentence: str,
                      merge_sentences: bool=True,
-                     print_info: bool=False) -> List[List[str]]:
+                     print_info: bool=True) -> List[List[str]]:
         # TN & Text Segmentation
         sentences = self.text_normalizer.normalize(sentence)
         # G2P
@@ -103,7 +103,7 @@ class CantonFrontend():
                       merge_sentences: bool=True,
                       print_info: bool=False,
                       to_tensor: bool=True) -> Dict[str, List[paddle.Tensor]]:
-
+                      
         phonemes = self.get_phonemes(
             sentence, merge_sentences=merge_sentences, print_info=print_info)
 
